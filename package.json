@@ -1,0 +1,17 @@
+{
+  "name": "CDVScreenShield",
+  "version": "1.0.0",
+  "description": "Protect your app from screen capture and recording.",
+  "cordova": {
+    "id": "com-outsystems-experts-screenshield",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-ios"
+  ],
+  "author": "André Grillo - OutSystems Experts Mobile",
+  "license": "MIT"
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        id="com-outsystems-experts-screenshield"
+        version="1.0.0">
+    <name>CDVScreenShield</name>
+    <description>Protect your app from screen capture and recording.</description>
+    <license>MIT</license>
+    <keywords>screen, capture, shield</keywords>
+    <js-module name="CDVScreenShield" src="www/screenShield.js">
+        <clobbers target="screenshield" />
+    </js-module>
+    <platform name="ios">
+    	<config-file target="config.xml" parent="/*">
+            <feature name="CDVScreenShield">
+                <param name="ios-package" value="CDVScreenShield" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+    	<hook type="before_plugin_install" src="hooks/install_prerequisites.js"/>
+        <hook type="after_plugin_add" src="hooks/add_swift_support.js" />
+        <source-file src="src/ios/CDVScreenShield.swift" />
+        <source-file src="src/ios/ScreenShield.swift" />
+    </platform>
+</plugin>
