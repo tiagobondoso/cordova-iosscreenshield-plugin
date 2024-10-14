@@ -1,4 +1,4 @@
-\!\[OutSystems\](https://www.outsystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo.202c3251.svg&w=256&q=75)
+![OutSystems](https://mms.businesswire.com/media/20210514005422/en/813093/23/OutSystems-logo-digital-2018-main-color%402x.jpg)
 
 # cordova-iosscreenshield-plugin
 
