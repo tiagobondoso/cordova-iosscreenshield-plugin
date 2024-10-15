@@ -21,17 +21,23 @@ class CDVScreenShield: CDVPlugin {
                 
                 // Add WKWebView to the secure container
                 secureView.addSubview(webView)
-                webView.pinEdges()  // Pin web view to the secure container
+                webView.pinEdges(to: secureView)
                 
                 // Add the secure container to the main Cordova view
                 if let cordovaViewController = self.viewController {
                     cordovaViewController.view.addSubview(secureView)
-                    secureView.pinEdges()
+                    //secureView.pinEdges()
+                    secureView.pinEdges(to: cordovaViewController.view)
                 }
                 
-                // Activate screen recording protection
+                // Activate screen recording protection (video)
                 if shouldBlockScreenRecording {
-                    ScreenShield.shared.protectFromScreenRecording()
+                    guard let message = command.arguments[1] as? String, let fontSize = command.arguments[2] as? CGFloat, let fontColor = command.arguments[3] as? String else {
+                        let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Missing input parameters")
+                        self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
+                        return
+                    }
+                    ScreenShield.shared.protectFromScreenRecording(message: message, fontSize: fontSize, fontColor: fontColor)
                 }
                 
                 let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
