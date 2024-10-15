@@ -1,6 +1,6 @@
 //
 //  SecureField.swift
-//  
+//  iOS Screen Shield Sample App
 //
 //  Created by Andre Grillo on 14/10/2024.
 //
@@ -36,20 +36,25 @@ class SecureField: UITextField {
 
 extension UIView {
     
-    // Pin edges to a specific view (e.g., window or webView)
     func pinEdges(to superview: UIView) {
         self.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            self.topAnchor.constraint(equalTo: superview.topAnchor),
-            self.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
-            self.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
-            self.trailingAnchor.constraint(equalTo: superview.trailingAnchor)
-        ])
-    }
 
-    // Alternative pin method without parameters (in case it's needed elsewhere)
-    func pinEdges() {
-        guard let superview = self.superview else { return }
-        pinEdges(to: superview)
+        // Use safeAreaLayoutGuide to avoid overlapping the status bar
+        if #available(iOS 11.0, *) {
+            NSLayoutConstraint.activate([
+                self.topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor),
+                self.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor),
+                self.leadingAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.leadingAnchor),
+                self.trailingAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.trailingAnchor)
+            ])
+        } else {
+            // Fallback on earlier versions (no safe area, use superview edges)
+            NSLayoutConstraint.activate([
+                self.topAnchor.constraint(equalTo: superview.topAnchor),
+                self.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+                self.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
+                self.trailingAnchor.constraint(equalTo: superview.trailingAnchor)
+            ])
+        }
     }
 }
