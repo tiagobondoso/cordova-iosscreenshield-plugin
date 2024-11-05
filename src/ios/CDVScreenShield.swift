@@ -57,8 +57,10 @@ class CDVScreenShield: CDVPlugin {
                 // Remove WKWebView from the secure container and add it back to main Cordova view
                 if let cordovaViewController = self.viewController {
                     secureView.removeFromSuperview()
-                    cordovaViewController.view.addSubview(self.webView as! UIView)
-                    (self.webView as! UIView).pinEdges(to: cordovaViewController.view)
+                    if let webView = self.webView as? UIView {
+                        cordovaViewController.view.addSubview(webView)
+                        webView.pinEdges(to: cordovaViewController.view)
+                    }
                 } else {
                     let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "No ViewController found")
                     self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
@@ -77,5 +79,6 @@ class CDVScreenShield: CDVPlugin {
             self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
         }
     }
+
 
 }
