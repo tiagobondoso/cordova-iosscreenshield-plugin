@@ -53,32 +53,37 @@ class CDVScreenShield: CDVPlugin {
     @objc(removeProtectionFromWebView:)
     func removeProtectionFromWebView(command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
-            if let secureView = self.webView?.superview, secureView is SecureView {
-                // Remove WKWebView from the secure container and add it back to main Cordova view
+            // Verifica se self.webView não é nil e se tem um superview
+            guard let webView = self.webView else {
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "WebView is nil")
+                self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
+                return
+            }
+            
+            // Verifica se o superview é do tipo SecureView
+            if let secureView = webView.superview, secureView is SecureView {
+                // Remove WKWebView do container seguro e adiciona de volta à visão principal do Cordova
                 if let cordovaViewController = self.viewController {
                     secureView.removeFromSuperview()
-                    if let webView = self.webView as? UIView {
-                        cordovaViewController.view.addSubview(webView)
-                        webView.pinEdges(to: cordovaViewController.view)
-                    }
+                    cordovaViewController.view.addSubview(webView as! UIView)
+                    (webView as! UIView).pinEdges(to: cordovaViewController.view)
                 } else {
                     let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "No ViewController found")
                     self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
                     return
                 }
             } else {
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "WebView is not within a secure container")
+                let message = secureView is SecureView ? "WebView is not within a secure container" : "WebView does not have a superview"
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: message)
                 self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
                 return
             }
 
-            // Deactivate screen recording protection
+            // Desativar a proteção contra gravação de tela
             ScreenShield.shared.deactivateProtection()
 
             let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
             self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
         }
     }
-
-
 }
