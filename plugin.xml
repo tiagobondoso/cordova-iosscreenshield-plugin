@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         id="com-outsystems-experts-screenshield"
-        version="1.0.0">
+        version="1.0.1">
     <name>CDVScreenShield</name>
     <description>Protect your app from screen capture and recording.</description>
     <license>MIT</license>
