@@ -59,9 +59,11 @@ class CDVScreenShield: CDVPlugin {
                 self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
                 return
             }
+
+            guard let secureView = SecureField().secureContainer else { return }
             
             // Verifica se o superview é do tipo SecureView
-            if let secureView = webView.superview, secureView is SecureView {
+            if secureView {
                 // Remove WKWebView do container seguro e adiciona de volta à visão principal do Cordova
                 if let cordovaViewController = self.viewController {
                     secureView.removeFromSuperview()
