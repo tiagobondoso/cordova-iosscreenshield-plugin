@@ -113,5 +113,14 @@ import UIKit
         blurView?.removeFromSuperview()
         blurView = nil
     }
+
+    public func deactivateProtection() {
+        // Stop the recording observation
+        recordingObservation?.invalidate()
+        recordingObservation = nil
+
+        // Remove the blur view, if present
+        removeBlurView()
+    }
 }
 
