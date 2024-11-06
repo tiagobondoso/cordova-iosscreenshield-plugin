@@ -31,7 +31,15 @@ class CDVScreenShield: CDVPlugin {
                     secureView.pinEdges(to: cordovaViewController.view)
                 }
 
-                // Código para ativar a proteção...
+                // Activate screen recording protection (video)
+                if shouldBlockScreenRecording {
+                    guard let message = command.arguments[1] as? String, let fontSize = command.arguments[2] as? CGFloat, let fontColor = command.arguments[3] as? String else {
+                        let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Missing input parameters")
+                        self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
+                        return
+                    }
+                    ScreenShield.shared.protectFromScreenRecording(message: message, fontSize: fontSize, fontColor: fontColor)
+                }
 
                 let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
                 self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
