@@ -21,7 +21,12 @@ class CDVScreenShield: CDVPlugin {
                     self.secureView = SecureField().secureContainer
                 }
 
-                guard let secureView = self.secureView else { return }
+                guard let secureView = self.secureView else { 
+                    //Set error for test
+                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Failed do intialize secureView")
+                    self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
+                    return 
+                }
 
                 secureView.addSubview(webView)
                 webView.pinEdges(to: secureView)
