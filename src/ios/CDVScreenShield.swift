@@ -11,10 +11,10 @@ import WebKit
 
 @objc(CDVScreenShield)
 class CDVScreenShield: CDVPlugin {
-    
-    // Torna a variável `secureView` uma variável global à classe
-    private var secureView: SecureView?  // Agora a variável é global dentro da classe
-    
+
+    // Guardar referência ao secureView
+    private var secureView: UIView?
+
     @objc(protectWebView:)
     func protectWebView(command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
@@ -38,16 +38,9 @@ class CDVScreenShield: CDVPlugin {
                     secureView.pinEdges(to: cordovaViewController.view)
                 }
                 
-                // Activate screen recording protection (video)
+                // Ativar proteção contra gravação de tela e captura de tela
                 if shouldBlockScreenRecording {
-                    guard let message = command.arguments[1] as? String,
-                          let fontSize = command.arguments[2] as? CGFloat,
-                          let fontColor = command.arguments[3] as? String else {
-                        let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Missing input parameters")
-                        self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
-                        return
-                    }
-                    ScreenShield.shared.protectFromScreenRecording(message: message, fontSize: fontSize, fontColor: fontColor)
+                    self.preventScreenCaptureAndRecording()
                 }
                 
                 let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
@@ -62,31 +55,58 @@ class CDVScreenShield: CDVPlugin {
     @objc(removeProtectionFromWebView:)
     func removeProtectionFromWebView(command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
-            // Verifica se secureView existe antes de tentar usá-la
-            guard let secureView = self.secureView else {
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "SecureView is nil")
-                self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
-                return
-            }
-
-            // Remove WKWebView do container seguro e adiciona de volta à visão principal do Cordova
-            if let cordovaViewController = self.viewController {
-                secureView.removeFromSuperview()
-                if let webView = self.webView as? UIView {
-                    cordovaViewController.view.addSubview(webView)
-                    webView.pinEdges(to: cordovaViewController.view)
+            if let secureView = self.secureView {
+                // Remove WKWebView from the secure container and add it back to the main Cordova view
+                if let cordovaViewController = self.viewController {
+                    secureView.removeFromSuperview()
+                    if let webView = self.webView as? UIView {
+                        cordovaViewController.view.addSubview(webView)
+                        webView.pinEdges(to: cordovaViewController.view)
+                    }
+                } else {
+                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "No ViewController found")
+                    self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
+                    return
                 }
-            } else {
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "No ViewController found")
-                self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
-                return
             }
 
-            // Desativar a proteção contra gravação de tela
-            ScreenShield.shared.deactivateProtection()
+            // Allow screen capture and recording again
+            self.allowScreenCaptureAndRecording()
 
             let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
             self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
         }
+    }
+
+    // Função para bloquear capturas de tela e gravação de tela
+    private func preventScreenCaptureAndRecording() {
+        // Impede captura de tela
+        if #available(iOS 11.0, *) {
+            UIScreen.main.isCaptured = true
+        }
+
+        // Impede gravação de tela
+        if #available(iOS 11.0, *) {
+            UIApplication.shared.isIdleTimerDisabled = true // Pode ajudar a impedir gravação de tela em alguns casos
+        }
+
+        // Outra abordagem pode envolver a utilização do método de proteção de vídeo da ScreenShield se necessário
+        ScreenShield.shared.protectFromScreenRecording(message: "Screen Recording Disabled", fontSize: 14.0, fontColor: "#FF0000")
+    }
+
+    // Função para permitir captura de tela e gravação de tela
+    private func allowScreenCaptureAndRecording() {
+        // Permite captura de tela
+        if #available(iOS 11.0, *) {
+            UIScreen.main.isCaptured = false
+        }
+
+        // Permite gravação de tela
+        if #available(iOS 11.0, *) {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+
+        // Desativa a proteção de gravação de tela
+        ScreenShield.shared.deactivateProtection()
     }
 }
