@@ -53,22 +53,17 @@ class CDVScreenShield: CDVPlugin {
     @objc(removeProtectionFromWebView:)
     func removeProtectionFromWebView(command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
-            if let secureView = self.webView.superview, secureView is SecureView {
-                // Remove WKWebView from the secure container and add it back to main Cordova view
-                if let cordovaViewController = self.viewController {
-                    secureView.removeFromSuperview()
-                    cordovaViewController.view.addSubview(self.webView as! UIView)
-                    (self.webView as! UIView).pinEdges(to: cordovaViewController.view)
-                } else {
-                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "No ViewController found")
-                    self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
-                    return
-                }
+            let secureView = self.webView.superview
+            // Remove WKWebView from the secure container and add it back to main Cordova view
+            if let cordovaViewController = self.viewController {
+                secureView.removeFromSuperview()
+                cordovaViewController.view.addSubview(self.webView as! UIView)
+                (self.webView as! UIView).pinEdges(to: cordovaViewController.view)
             } else {
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "WebView is not within a secure container")
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "No ViewController found")
                 self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
                 return
-            }
+            } 
 
             // Deactivate screen recording protection
             ScreenShield.shared.deactivateProtection()
