@@ -21,7 +21,7 @@ class CDVScreenShield: CDVPlugin {
                     self.secureView = SecureField().secureContainer
                 }
 
-                guard let secureView = self.secureView
+                guard let secureView = self.secureView else { return }
 
                 secureView.addSubview(webView)
                 webView.pinEdges(to: secureView)
