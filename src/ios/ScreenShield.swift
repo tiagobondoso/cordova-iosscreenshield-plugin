@@ -114,5 +114,21 @@ import UIKit
         blurView = nil
     }
 
+    // Função para desativar a proteção (permitir captura novamente)
+    func deactivateProtection() {
+        // Remover a camada de proteção (se houver)
+        if let blurView = blurView {
+            blurView.removeFromSuperview()  // Remove a sobreposição da tela
+            self.blurView = nil  // Limpa a referência
+        }
+        
+        // Se você estiver monitorando a captura de tela, pare esse monitoramento aqui
+        if screenProtectionActive {
+            // Parar o monitoramento de captura de tela (exemplo de como pode ser feito)
+            stopScreenCaptureMonitoring()
+            screenProtectionActive = false
+        }
+    }
+
 }
 

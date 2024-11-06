@@ -53,7 +53,7 @@ class CDVScreenShield: CDVPlugin {
     @objc(removeProtectionFromWebView:)
     func removeProtectionFromWebView(command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
-             guard let secureView = SecureField().secureContainer 
+            let secureView = self.webView?.superview
                 // Remove WKWebView from the secure container and add it back to main Cordova view
                 if let cordovaViewController = self.viewController {
                     secureView.removeFromSuperview()
