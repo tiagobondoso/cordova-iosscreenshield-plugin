@@ -50,7 +50,7 @@ class CDVScreenShield: CDVPlugin {
         }
     }
 
-    @objc(removeProtectionFromWebView:)
+    /*@objc(removeProtectionFromWebView:)
     func removeProtectionFromWebView(command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
             if let secureView = self.webView?.superview, secureView is SecureView {
@@ -75,5 +75,5 @@ class CDVScreenShield: CDVPlugin {
             let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
             self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
         }
-    }
+    }*/
 }
