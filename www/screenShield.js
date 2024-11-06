@@ -4,6 +4,6 @@ exports.protectWebView = function (success, error, shouldBlockScreenRecording, m
     exec(success, error, 'CDVScreenShield', 'protectWebView', [shouldBlockScreenRecording, message, fontSize, fontColor]);
 };
 
-/*exports.removeProtectionFromWebView = function (success, error) {
+exports.removeProtectionFromWebView = function (success, error) {
     exec(success, error, 'CDVScreenShield', 'removeProtectionFromWebView');
-};*/
+};
