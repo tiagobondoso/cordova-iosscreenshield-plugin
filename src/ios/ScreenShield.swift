@@ -114,14 +114,5 @@ import UIKit
         blurView = nil
     }
 
-    public func deactivateProtection() {
-        // Finaliza a observação da gravação, se existir
-        recordingObservation?.invalidate()
-        recordingObservation = nil
-
-        // Remove a blur view, se estiver presente
-        removeBlurView()
-    }
-
 }
 
