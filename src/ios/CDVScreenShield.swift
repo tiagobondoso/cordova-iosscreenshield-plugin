@@ -17,26 +17,19 @@ class CDVScreenShield: CDVPlugin {
         DispatchQueue.main.async {
             let shouldBlockScreenRecording = (command.arguments.first as? Bool) ?? false
             if let webView = self.webView as? WKWebView {
-                if self.secureView == nil {
-                    self.secureView = SecureField().secureContainer
-                }
-
-                guard let secureView = self.secureView else { 
-                    //Set error for test
-                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Failed do intialize secureView")
-                    self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
-                    return 
-                }
-
-                secureView.addSubview(webView)
-                webView.pinEdges(to: secureView)
-
+                self.secureView = SecureField().secureContainer else { return }
+                
+                // Add WKWebView to the secure container
+                self.secureView.addSubview(webView)
+                webView.pinEdges(to: self.secureView)
+                
                 // Add the secure container to the main Cordova view
                 if let cordovaViewController = self.viewController {
-                    cordovaViewController.view.addSubview(secureView)
-                    secureView.pinEdges(to: cordovaViewController.view)
+                    cordovaViewController.view.addSubview(self.secureView)
+                    //secureView.pinEdges()
+                    self.secureView.pinEdges(to: cordovaViewController.view)
                 }
-
+                
                 // Activate screen recording protection (video)
                 if shouldBlockScreenRecording {
                     guard let message = command.arguments[1] as? String, let fontSize = command.arguments[2] as? CGFloat, let fontColor = command.arguments[3] as? String else {
@@ -46,7 +39,7 @@ class CDVScreenShield: CDVPlugin {
                     }
                     ScreenShield.shared.protectFromScreenRecording(message: message, fontSize: fontSize, fontColor: fontColor)
                 }
-
+                
                 let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
                 self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
             } else {
