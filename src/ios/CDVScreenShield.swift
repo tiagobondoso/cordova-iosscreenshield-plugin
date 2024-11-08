@@ -31,6 +31,7 @@ class CDVScreenShield: CDVPlugin {
                 secureView.addSubview(webView)
                 webView.pinEdges(to: secureView)
 
+                // Add the secure container to the main Cordova view
                 if let cordovaViewController = self.viewController {
                     cordovaViewController.view.addSubview(secureView)
                     secureView.pinEdges(to: cordovaViewController.view)
