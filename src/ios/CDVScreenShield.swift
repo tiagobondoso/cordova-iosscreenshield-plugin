@@ -48,4 +48,22 @@ class CDVScreenShield: CDVPlugin {
             }
         }
     }
+
+    // Desabilitar a proteção de screenshots e gravação de tela
+    public func removeProtectionFromWebView() {
+        // Remove o container de proteção, permitindo capturas de tela
+        if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+            if let secureView = SecureField().secureContainer {
+                secureView.removeFromSuperview()  // Remove o secureView da janela
+            }
+        }
+
+        // Desativa a proteção contra gravação de tela (remove o blur)
+        removeBlurView()
+
+        // Stop the screen recording observation
+        recordingObservation?.invalidate()
+        recordingObservation = nil
+    }
+
 }
